@@ -1,4 +1,4 @@
-function [ R ] = wall(radar_pos, theta, gamma, M, plots, debug)
+function [ R ] = wall(radar_pos, theta, gamma, M, target_pos, target_size, plots, debug)
 
 R = 0; % Return 0 range if no detection is made
 
@@ -8,7 +8,7 @@ scene_y = 15; % Plot y dimension in m
 radar_pos = radar_pos; % x y position of the radar
 %M = 1; % Number of bounces considered
 
-target_pos = [10 7];
+%target_pos = [10 7];
 theta = theta; % angle of radar beam in degrees
 
 wall1_x = 7; % x coordinate of wall 1
@@ -35,6 +35,9 @@ figure;
 hold on;
 plot([wall1_x, wall1_x, scene_x], [0, wall1_y, wall1_y], 'k'); % plot wall 1
 plot([wall2_x, wall2_x, scene_x], [scene_y, wall2_y, wall2_y], 'k'); % plot wall 2
+
+%% Plot the target
+plot([target_pos(1) - target_size / 2, target_pos(1) + target_size / 2], [target_pos(2), target_pos(2)]);
 
 %% Begin painful geometry
 if tand(theta) * (wall2_x - radar_pos*(1))+radar_pos(2) > wall2_y % beam overshoots the gap
@@ -71,7 +74,8 @@ else
     R = (s - radar_pos(1))/cosd(theta);
 end
 scatter(radar_pos(1), radar_pos(2));
-scatter(target_pos(1), target_pos(2));
+% scatter(target_pos(1), target_pos(2)); % Plots a point at center of
+% target
 xlim([0, scene_x]);
 ylim([0, scene_y]);
-saveas(gcf,sprintf('images/fig%d.png', theta))
+% saveas(gcf,sprintf('images/fig%d.png', theta))
