@@ -1,4 +1,4 @@
-function [ R ] = wall(radar_pos, theta, gamma, M, target_pos, target_size, plots, debug)
+function [ R ] = wall(radar_pos, theta, M, target_pos, target_size, plots, debug)
 
 R = 0; % Return 0 range if no detection is made
 
