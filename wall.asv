@@ -50,9 +50,9 @@ else
     s = (wall2_y - radar_pos(2))/tand(theta) + radar_pos(1); % x-position where beam hits upper wall
     x_inc = (wall2_y - wall1_y)/tand(theta); % x-value increment for each bounce
     
-    target(radar_pos(1), radar_pos(2), target_pos(1), target_pos(2), target_size, wall1_x, wall1_y, wall2_x, wall2_y, theta)
-        
-    
+    if target(radar_pos(1), radar_pos(2), target_pos(1), target_pos(2), target_size, wall1_x, wall1_y, wall2_x, wall2_y, theta)
+        disp("hit");
+    end
     plot_x = [radar_pos(1), s];
     plot_y = [radar_pos(2), wall2_y];
     while M > 0
