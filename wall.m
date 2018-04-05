@@ -1,4 +1,4 @@
-function [ R ] = wall(radar_pos, theta, M, target_pos, target_size, plots, debug)
+function [ M, R ] = wall(radar_pos, theta, M, target_pos, target_size)
 
 R = 0; % Return 0 range if no detection is made
 
@@ -50,22 +50,42 @@ else
     s = (wall2_y - radar_pos(2))/tand(theta) + radar_pos(1); % x-position where beam hits upper wall
     x_inc = (wall2_y - wall1_y)/tand(theta); % x-value increment for each bounce
     
-    target(radar_pos(1), radar_pos(2), target_pos(1), target_pos(2), target_size, wall1_x, wall1_y, wall2_x, wall2_y, theta)
-        
+    [M, hit_status] = target(radar_pos(1), radar_pos(2), target_pos(1), target_pos(2), target_size, wall1_y, wall2_y, theta);
     
+     
+    % first segment to the target
+    
+    if target_pos(1) - target_size / 2 < s % beam hits target before walls
+        s = (target_pos(2) - radar_pos(2))/tand(theta) + radar_pos(1); % x-position where beam hits target
+        plot_y = [radar_pos(2), target_pos(2)];
+    else
+        plot_y = [radar_pos(2), wall2_y];
+    end
     plot_x = [radar_pos(1), s];
-    plot_y = [radar_pos(2), wall2_y];
+    
     while M > 0
         if M > 1
             plot_x = [plot_x, s + x_inc, s + 2*x_inc];
             plot_y = [plot_y, wall1_y, wall2_y];
             s = s + 2 * x_inc;
             M = M-2;
+            % stop last reflection at target
+            if and(~M, hit_status)
+                plot_y(end) = target_pos(2);
+                plot_x(end) = ((target_pos(2) - wall1_y)/(wall2_y - wall1_y)) * x_inc + plot_x(end -1);
+                s = plot_x(end);
+            end            
         else
             plot_x = [plot_x, s + x_inc];
             plot_y = [plot_y, wall1_y];
             s = s + x_inc;
-            M = M-1;
+            M = M - 1;
+            % stop last reflection at target
+            if and(~M, hit_status)
+                plot_y(end) = target_pos(2);
+                plot_x(end) = ((wall2_y - target_pos(2))/(wall2_y - wall1_y)) * x_inc + plot_x(end -1);
+                s = plot_x(end);
+            end
         end
             
     end
@@ -75,11 +95,15 @@ else
     %   This calculates total range of the beam.
     %   TODO: Calculate range to target after target detection code is
     %   developed
-    R = (s - radar_pos(1))/cosd(theta);
+    if hit_status
+        R = (s - radar_pos(1))/cosd(theta);
+    else
+        R = inf;
+    end
 end
 scatter(radar_pos(1), radar_pos(2));
 % scatter(target_pos(1), target_pos(2)); % Plots a point at center of
 % target
 xlim([0, scene_x]);
-ylim([0, scene_y]);
+ylim([0, scene_y]); 
 % saveas(gcf,sprintf('images/fig%d.png', theta))
