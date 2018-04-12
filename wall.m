@@ -1,4 +1,4 @@
-function [ M, R ] = wall(radar_pos, theta, M, target_pos, target_size)
+function [ k, R ] = wall(radar_pos, theta, M, target_pos, target_size)
 
 R = 0; % Return 0 range if no detection is made
 
@@ -54,8 +54,8 @@ else
     
      
     % first segment to the target
-    
-    if target_pos(1) - target_size / 2 < s % beam hits target before walls
+    k = M;
+    if M == 0  % beam hits target before walls
         s = (target_pos(2) - radar_pos(2))/tand(theta) + radar_pos(1); % x-position where beam hits target
         plot_y = [radar_pos(2), target_pos(2)];
     else
