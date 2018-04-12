@@ -40,7 +40,7 @@ function radar(m, radar_pos, target_pos, target_vel, gam, p_t, g, f, noise_fig, 
         for j = 1:1:m
            %Get range to target for all values of theta and break out of m
            %      loop and continue through theta if nonzero range
-           range1 = wall(radar_pos, theta, j, target_pos, 1, 1, 1);
+           range1 = wall(radar_pos, theta, j, target_pos, 1);
            
            %Check to see if target was hit at this angle with j number of
            %bounces
@@ -48,10 +48,8 @@ function radar(m, radar_pos, target_pos, target_vel, gam, p_t, g, f, noise_fig, 
                break;
            end
         end
-        SNR = [SNR, (((p_t * (g^2) * (lambda^2) * sigma)/((4*pi)^3 *...
-            (range1^4) * k * To * B * noise_fig * L))*gam^j)];
+        SNR = [SNR, 10*log10((((p_t * (g^2) * (lambda^2) * sigma)/((4*pi)^3 *...
+            (range1^4) * k * To * B * noise_fig * L))*gam^j))];
     end
     end
     
-    % Calculate SNR for all range values. If range = 0, assume SNR = 0
-    % (natural units)
