@@ -1,8 +1,8 @@
-function [ k, R ] = wall(radar_pos, theta, M, target_pos, target_size)
+function [ k, R ] = wall(radar_pos, theta, target_pos, target_size)
 
-R = 0; % Return 0 range if no detection is made
+R = inf; % Return 0 range if no detection is made
 
-scene_x = 15; % Plot x dimension in m
+scene_x = 30; % Plot x dimension in m
 scene_y = 15; % Plot y dimension in m
 
 radar_pos = radar_pos; % x y position of the radar
@@ -31,7 +31,8 @@ end
 %} 
 
 %% Plot the walls
-figure;
+%figure;
+subplot(2,1,1)
 hold on;
 plot([wall1_x, wall1_x, scene_x], [0, wall1_y, wall1_y], 'k'); % plot wall 1
 plot([wall2_x, wall2_x, scene_x], [scene_y, wall2_y, wall2_y], 'k'); % plot wall 2
@@ -40,6 +41,7 @@ plot([wall2_x, wall2_x, scene_x], [scene_y, wall2_y, wall2_y], 'k'); % plot wall
 plot([target_pos(1) - target_size / 2, target_pos(1) + target_size / 2], [target_pos(2), target_pos(2)]);
 
 %% Begin painful geometry
+k = 0;
 if tand(theta) * (wall2_x - radar_pos*(1))+radar_pos(2) > wall2_y % beam overshoots the gap
     s = tand(theta) * (wall2_x - radar_pos(1))+radar_pos(2); % y-position where beam hits wall face
     plot([radar_pos(1), wall2_x, 0], [radar_pos(2), s, tand(theta) * (wall2_x - radar_pos(1)) + s]);
@@ -101,6 +103,9 @@ else
         R = inf;
     end
 end
+drawnow
+hold off
+pause(0.000000001)
 scatter(radar_pos(1), radar_pos(2));
 % scatter(target_pos(1), target_pos(2)); % Plots a point at center of
 % target
