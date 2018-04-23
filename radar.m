@@ -42,14 +42,15 @@ function radar(radar_pos, target_pos, target_vel, gam, p_t, g, f, noise_fig, L, 
         target_pos(1) = target_vel * Steptime + target_pos(1);
         
         %Calculate angle of beam
-        theta = mod((4*spin_f*time*(180/pi)), 90);
+        %.25 * spin_f because only considering 1/4 of the sweep
+        theta = mod((.25*spin_f*time*360), 90);
         
         %Get range to target and number of bounces till detection
         [j,range1] = wall(radar_pos, theta, target_pos, 1);
         
         %Calculate SNR in dB
         SNR = [SNR, 10*log10((((p_t * (g^2) * (lambda^2) * sigma)/((4*pi)^3 *...
-            (range1^4) * k * To * B * noise_fig * L))*gam^j))];
+            (range1^4) * k * To * B * noise_fig * L))*gam^(2*j)))];
         
         if SNR(end) <0
              SNR(end) = 0;
